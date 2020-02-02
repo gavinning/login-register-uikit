@@ -1,19 +1,76 @@
-# login-register-uikit
+Login-register-uikit
+---
+简单实用的登录注册页
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+## Setup
+```sh
+npm i login-register-uikit
 ```
 
-### Compiles and minifies for production
+### Usage
+路由配置示例
+```js
+import Login from '../views/Login.vue'
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: Home
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: { status: 0 }
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Login,
+    meta: { status: 1 }
+  },
+]
 ```
-npm run build
+Login.vue
+```vue
+<template>
+<login-register
+    ref="loginRegister"
+    :status="status"
+    :loginSubmit="loginSubmit"
+    :registerSubmit="registerSubmit"
+/>
+</template>
+<script>
+import LoginRegister from 'login-register-uikit'
+
+export default {
+    components: { LoginRegister },
+
+    methods: {
+        loginSubmit() {
+            // 处理登录
+            console.log('Login:', this.$refs.loginRegister.login)
+        },
+
+        registerSubmit() {
+            // 处理注册
+            console.log('Register:', this.$refs.loginRegister.register)
+        }
+    },
+
+    computed: {
+        status() {
+            return this.$route.meta.status
+        }
+    }
+}
+</script>
+
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Preview
+
+![](login.png)  
+![](register.png)  
