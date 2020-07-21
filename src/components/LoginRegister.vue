@@ -70,6 +70,12 @@ export default {
             this.formValid[field] = false
         },
 
+        resetValid() {
+            for(let key in this.formValid) {
+                this.formValid[key] = null
+            }
+        },
+
         async map(array, fn) {
             const tmp = []
             for(let i = 0; i < array.length; i++) {
@@ -80,18 +86,21 @@ export default {
 
         // 表单提交预处理
         async formResolver() {
+            this.resetValid()
             try {
-                await this.map(this.formRender.fields, async(item) => {
-                    if (item.validate && !(await item.validate(this.form[item.field]))) {
-                        this.tip = item.placeholder
-                        this.formValid[item.field] = true
-                        throw new Error(item.placeholder)
-                    }
-                })
+                await this.map(this.formRender.fields, async(item) => this.validate(item))
                 this.formSubmit(this.form)
             }
             catch(err) {
                 console.warn(err.message)
+            }
+        },
+
+        async validate(field) {
+            if (field.validate && !(await field.validate(this.form[field.field]))) {
+                this.tip = field.placeholder
+                this.formValid[field.field] = true
+                throw new Error(field.placeholder)
             }
         },
 
@@ -105,12 +114,27 @@ export default {
         },
 
         // 处理验证码等待时间
-        passcodeResolver(passcode) {
-            passcode.submit()
+        async passcodeResolver(passcode) {
+
+            // 查询手机号绑定的字段
+            const binding = this.formRender.fields.find(item => item.field === passcode.binding)
+            
+            try {
+                this.resetValid()
+                // 验证手机号是否已输入
+                await this.validate(binding)
+            }
+            catch(err) {
+                return console.warn(err.message)
+            }
+
+            // 传递手机号
+            passcode.submit(this.form)
+
+            // 等待重试操作
             const text = passcode.text
             passcode.disabled = true
             passcode.text = `${passcode.wait} 秒后重试`
-            // 等待重试
             let i = passcode.wait
             let t = setInterval(() => {
                 i--

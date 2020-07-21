@@ -40,10 +40,10 @@ export default {
                 submit: '立即注册',
                 fields: [
                     {
-                        type: 'text',
-                        field: 'username',
-                        placeholder: '请输入用户名',
-                        validate(value) {
+                        type: 'text', // 输入框类型
+                        field: 'username', // 输入框绑定字段
+                        placeholder: '请输入用户名', // 占位文字，错误提示使用该字段
+                        async validate(value) { // 支持async异步函数
                             return !!value
                         }
                     },
@@ -65,18 +65,19 @@ export default {
                         }
                     },
                     {
-                        type: 'passcode',
-                        field: 'code',
-                        wait: 10,
-                        maxLength: 4,
-                        disabled: false,
+                        type: 'passcode', // 验证码定制类型
+                        field: 'code', // 验证码绑定字段
+                        wait: 60, // 重试等待时间，单位秒
+                        maxLength: 4, // 验证码长度
+                        binding: 'tel', // 关联验证手机号字段，重要！
+                        disabled: false, // 默认false
                         text: '获取验证码',
                         placeholder: '请输入验证码',
                         validate(value) {
                             return value && value.length === 4
                         },
-                        submit() {
-                            console.log('passcode submit')
+                        submit({ tel }) { // 发送验证码逻辑
+                            console.log('passcode submit', tel)
                         }
                     }
                 ]

@@ -1,6 +1,6 @@
 {
   "name": "login-register-uikit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "简单易用的注册登陆页",
   "main": "src/components/LoginRegister.vue",
   "scripts": {
